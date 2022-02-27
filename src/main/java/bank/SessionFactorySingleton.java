@@ -1,7 +1,6 @@
 package bank;
 
-import onlineShop.Customer;
-import onlineShop.User;
+import onlineShop.OnlineShopUser;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -25,7 +24,7 @@ public class SessionFactorySingleton {
                     .addAnnotatedClass(Clerk.class)
                     .addAnnotatedClass(Client.class)
                     .addAnnotatedClass(President.class)
-                    .addAnnotatedClass(User.class)
+                    .addAnnotatedClass(OnlineShopUser.class)
                     .buildMetadata()
                     .buildSessionFactory();
         }

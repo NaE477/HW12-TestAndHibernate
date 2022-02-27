@@ -19,10 +19,9 @@ public class Account {
     private String accountNumber;
     @OneToOne
     private Client client;
-    @ManyToOne
-    @JoinColumn(name = "bank_id")
+    @OneToOne
     private Bank bank;
-    @ManyToOne
+    @OneToOne
     private Branch branch;
     private Double balance;
 
@@ -31,7 +30,7 @@ public class Account {
         return "ID: " + id +
                 " Account Number: "  + accountNumber +
                 " Owner: " + client.getUsername() +
-                " Bank: " + bank.getName() +
+                " Bank: " + bank.getBank_name() +
                 " Branch: " + branch.getBranch_name() +
                 " Balance: " + balance.toString();
     }

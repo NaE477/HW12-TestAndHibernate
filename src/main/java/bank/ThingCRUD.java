@@ -4,11 +4,9 @@ import java.util.List;
 
 public interface ThingCRUD<O> {
 
-    public void create();
-    public Integer insert(O o);
-    public O read(O o);
-    public O read(Integer targetId);
-    public List<O> readAll();
-    public Integer update(O obj);
-    public void delete(O obj);
+    Integer insert(O o);
+    O read(Integer targetId);
+    List<O> readAll();
+    Integer update(O obj);
+    void delete(O obj);
 }

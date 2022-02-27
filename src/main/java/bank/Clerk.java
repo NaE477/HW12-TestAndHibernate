@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Clerk extends User {
+public class Clerk extends BankUser {
     @OneToOne
     private Branch branch;
     @OneToOne

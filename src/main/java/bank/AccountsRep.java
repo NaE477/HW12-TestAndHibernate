@@ -1,6 +1,8 @@
 package bank;
 
-import java.sql.Connection;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,32 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountsRep implements ThingCRUD<Account> {
-    Connection connection;
-    public AccountsRep(Connection connection){
-        this.connection = connection;
-    }
-    @Override
-    public void create() {
-        String crtStmt = "CREATE TABLE IF NOT EXISTS accounts(" +
-                "id SERIAL PRIMARY KEY ," +
-                "accountnumber char(8)," +
-                "balance double precision," +
-                "bank_id integer," +
-                "branch_id integer," +
-                "client_id integer" +
-                ");"; // foreign keys applied
-
-        try {
-            PreparedStatement ps = connection.prepareStatement(crtStmt);
-            ps.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    private final SessionFactory sessionFactory;
+    public AccountsRep(SessionFactory sessionFactory){
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public Integer insert(Account account) {
-        String insertStmt = "INSERT INTO accounts (" +
+        var session = sessionFactory.openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            session.save(account);
+            transaction.commit();
+            session.close();
+            return account.getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String insertStmt = "INSERT INTO accounts (" +
                 "accountnumber, balance, bank_id, branch_id, client_id" +
                 ") " +
                 "VALUES (?,?,?,?,?)" +
@@ -52,46 +50,23 @@ public class AccountsRep implements ThingCRUD<Account> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
-    }
-
-    @Override
-    public Account read(Account account) {
-        String selectStmt = "SELECT * FROM accounts " +
-                " INNER JOIN clients c on c.id = accounts.client_id " +
-                "INNER JOIN banks b on b.id = accounts.bank_id " +
-                "INNER JOIN branches b2 on b.id = b2.bank_id " +
-                "WHERE id = ?;";
-        try {
-            PreparedStatement ps = connection.prepareStatement(selectStmt);
-            ps.setInt(1, account.getId());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Account(
-                        rs.getInt("id"),
-                        rs.getString("accountnumber"),
-                        new Client(
-                                rs.getInt("c.id"),
-                                rs.getString("username"),
-                                rs.getString("password")
-                        ),
-                        new Bank(
-                                rs.getInt("b.id"),
-                                rs.getString("bank_name")
-                        ),
-                        new Branch(rs.getInt("b2.id")),
-                        rs.getDouble("balance")
-                );
-            } else return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return null;*/
     }
 
     @Override
     public Account read(Integer accountId) {
-        String selectStmt = "SELECT * FROM accounts " +
+        var session = sessionFactory.openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            return session.get(Account.class,accountId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String selectStmt = "SELECT * FROM accounts " +
                 " INNER JOIN clients c on c.id = accounts.client_id " +
                 "INNER JOIN banks b on b.id = accounts.bank_id " +
                 "INNER JOIN branches b2 on b.id = b2.bank_id " +
@@ -121,12 +96,24 @@ public class AccountsRep implements ThingCRUD<Account> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
     @Override
     public List<Account> readAll() {
-        List<Account> accounts = new ArrayList<>();
+        var session = sessionFactory.openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            Query<Account> query = session.createQuery("from Account",Account.class);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*List<Account> accounts = new ArrayList<>();
         String selectStmt = "SELECT * FROM accounts " +
                 " INNER JOIN clients c on c.id = accounts.client_id " +
                 "INNER JOIN banks b on b.id = accounts.bank_id " +
@@ -156,11 +143,23 @@ public class AccountsRep implements ThingCRUD<Account> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
-    public List<Account> readAllByBranch(Integer branchId){
-        List<Account> accounts = new ArrayList<>();
+    public List<Account> readAllByBranch(Account account){
+        var session = sessionFactory.openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            Query<Account> query = session.createQuery("");
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*List<Account> accounts = new ArrayList<>();
         String selectStmt = "SELECT * FROM accounts " +
                 "INNER JOIN clients c on c.id = accounts.client_id " +
                 "INNER JOIN banks b on b.id = accounts.bank_id " +
@@ -193,10 +192,11 @@ public class AccountsRep implements ThingCRUD<Account> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
     public List<Account> readAllByClient(Integer clientId){
-        List<Account> accounts = new ArrayList<>();
+        return null;
+        /*List<Account> accounts = new ArrayList<>();
         String selectStmt = "SELECT * FROM accounts" +
                 " INNER JOIN clients c on c.id = accounts.client_id " +
                 " Inner Join banks b on b.id = accounts.bank_id " +
@@ -228,9 +228,9 @@ public class AccountsRep implements ThingCRUD<Account> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
-    public Account readAccountByClientAndBranch(Integer clientId,Integer branchId){
+    /*public Account readAccountByClientAndBranch(Integer clientId,Integer branchId){
         String selectStmt = "SELECT * FROM accounts " +
                 "INNER JOIN clients c on c.id = accounts.client_id " +
                 "INNER JOIN banks b on b.id = accounts.bank_id " +
@@ -255,11 +255,23 @@ public class AccountsRep implements ThingCRUD<Account> {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 
     @Override
     public Integer update(Account account) {
-        String updateStmt = "UPDATE accounts SET balance = ?" +
+        var session = sessionFactory.openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            session.update(account);
+            return account.getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String updateStmt = "UPDATE accounts SET balance = ?" +
                 "WHERE id = ?;";
         try {
             PreparedStatement ps = connection.prepareStatement(updateStmt);
@@ -270,18 +282,28 @@ public class AccountsRep implements ThingCRUD<Account> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
     @Override
     public void delete(Account account) {
-        String delStmt = "DELETE FROM accounts WHERE id = ?;";
+        var session = sessionFactory.openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            session.delete(account);
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+        }
+        /*String delStmt = "DELETE FROM accounts WHERE id = ?;";
         try {
             PreparedStatement ps = connection.prepareStatement(delStmt);
             ps.setInt(1, account.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

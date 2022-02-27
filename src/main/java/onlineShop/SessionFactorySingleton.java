@@ -18,7 +18,7 @@ public class SessionFactorySingleton {
             //registry is useful for creating session factory
             INSTANCE = new MetadataSources(registry)
                     .addAnnotatedClass(Customer.class)
-                    .addAnnotatedClass(User.class)
+                    .addAnnotatedClass(OnlineShopUser.class)
                     .buildMetadata()
                     .buildSessionFactory();
         }

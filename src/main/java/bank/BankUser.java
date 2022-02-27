@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-abstract public class User {
+abstract public class BankUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
@@ -22,7 +22,7 @@ abstract public class User {
     private String username;
     private String password;
 
-    public User(String firstname,String lastname,String username,String password){
+    public BankUser(String firstname, String lastname, String username, String password){
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;

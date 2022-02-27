@@ -17,11 +17,11 @@ public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private String branch_name;
     @OneToOne
     private Bank bank;
     @OneToOne
     private President president;
-    private String branch_name;
     @OneToMany
     private List<Clerk> clerks;
     @OneToMany

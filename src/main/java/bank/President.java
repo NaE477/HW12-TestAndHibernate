@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class President extends User {
+public class President extends BankUser {
     private Integer branch_id;
     @OneToMany
     private List<Clerk> clerks;

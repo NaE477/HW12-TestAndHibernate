@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @Entity
-public class Customer extends User {
+public class Customer extends OnlineShopUser {
     private String address;
     private Double balance;
 

@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Client extends User {
+public class Client extends BankUser {
     @OneToOne
     private Account account;
 
