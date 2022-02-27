@@ -1,5 +1,7 @@
 package onlineShop;
 
+import org.hibernate.SessionFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,13 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomersRepository extends Repository<Customer>{
-        public CustomersRepository(Connection connection) {
-            super(connection);
+        public CustomersRepository(SessionFactory sessionFactory) {
+            super(sessionFactory);
         }
 
     @Override
     public Integer insert(Customer customer) {
-        String insStmt = "INSERT INTO customers (first_name, last_name, username, password, email, address, balance) " +
+
+        /*String insStmt = "INSERT INTO customers (first_name, last_name, username, password, email, address, balance) " +
                 "VALUES (?,?,?,?,?,?,?) RETURNING customer_id;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
@@ -24,15 +27,15 @@ public class CustomersRepository extends Repository<Customer>{
             ps.setString(4, customer.getPassword());
             ps.setString(5, customer.getEmailAddress());
             ps.setString(6, customer.getAddress());
-            ps.setDouble(7,customer.getBalance());
+            ps.setDouble(7, customer.getBalance());
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt("customer_id");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
     @Override

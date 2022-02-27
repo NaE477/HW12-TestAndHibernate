@@ -1,6 +1,7 @@
 package onlineShop;
 
 import lombok.Getter;
+import org.hibernate.SessionFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,10 +9,10 @@ import java.util.List;
 
 @Getter
 public abstract class Repository<T> implements BaseRepository<T> {
-    private final Connection connection;
+    private final SessionFactory sessionFactory;
 
-    public Repository(Connection connection){
-        this.connection = connection;
+    public Repository(SessionFactory sessionFactory){
+        this.sessionFactory = sessionFactory;
     }
 
     protected abstract T mapTo(ResultSet rs);
