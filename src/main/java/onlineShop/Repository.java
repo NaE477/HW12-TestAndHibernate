@@ -15,7 +15,4 @@ public abstract class Repository<T> implements BaseRepository<T> {
         this.sessionFactory = sessionFactory;
     }
 
-    protected abstract T mapTo(ResultSet rs);
-
-    protected abstract List<T> mapToList(ResultSet rs);
 }

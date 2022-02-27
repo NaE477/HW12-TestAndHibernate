@@ -1,12 +1,7 @@
 package onlineShop;
 
 import org.hibernate.SessionFactory;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import org.hibernate.query.Query;
 import java.util.List;
 
 public class CustomersRepository extends Repository<Customer>{
@@ -16,7 +11,20 @@ public class CustomersRepository extends Repository<Customer>{
 
     @Override
     public Integer insert(Customer customer) {
+        var session = super.getSessionFactory().openSession();
 
+        var transaction = session.beginTransaction();
+
+        try {
+            Integer customerId = (Integer) session.save(customer);
+            transaction.commit();
+            session.close();
+            return customerId;
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
         /*String insStmt = "INSERT INTO customers (first_name, last_name, username, password, email, address, balance) " +
                 "VALUES (?,?,?,?,?,?,?) RETURNING customer_id;";
         try {
@@ -40,7 +48,18 @@ public class CustomersRepository extends Repository<Customer>{
 
     @Override
     public Customer read(Integer id) {
-        String readStmt = "SELECT * FROM customers WHERE customer_id = ?;";
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            return session.get(Customer.class, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String readStmt = "SELECT * FROM customers WHERE customer_id = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setInt(1,id);
@@ -48,10 +67,22 @@ public class CustomersRepository extends Repository<Customer>{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
+
     public Customer read(String username){
-        String readStmt = "SELECT * FROM customers WHERE username = ?;";
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            return session.get(Customer.class, username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String readStmt = "SELECT * FROM customers WHERE username = ?;";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
             ps.setString(1,username);
@@ -59,35 +90,61 @@ public class CustomersRepository extends Repository<Customer>{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
     public Customer readByEmail(String email){
-        String readStmt = "SELECT * FROM customers WHERE email = ?;";
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
         try {
-            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
-            ps.setString(1,email);
-            return mapTo(ps.executeQuery());
-        } catch (SQLException e) {
+            return session.get(Customer.class, email);
+        } catch (Exception e) {
             e.printStackTrace();
+            transaction.rollback();
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<Customer> readAll() {
-        String readAllStmt = "SELECT * FROM customers";
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            Query<Customer> query = session.createQuery("from Customer",Customer.class);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String readAllStmt = "SELECT * FROM customers";
         try {
             PreparedStatement ps = super.getConnection().prepareStatement(readAllStmt);
             return mapToList(ps.executeQuery());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
     @Override
     public Integer update(Customer customer) {
-        String updateStmt = "UPDATE customers" +
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            session.update(customer);
+            return customer.getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*String updateStmt = "UPDATE customers" +
                 " SET password = ?," +
                 "email = ?," +
                 "address = ?," +
@@ -108,12 +165,24 @@ public class CustomersRepository extends Repository<Customer>{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
     @Override
     public Integer delete(Customer customer) {
-        try{
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            session.delete(customer);
+            return customer.getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
+        /*try{
             String delStmt = "DELETE FROM customers WHERE customer_id = ? OR username = ? RETURNING customer_id;";
             PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
             ps.setInt(1,customer.getId());
@@ -125,12 +194,12 @@ public class CustomersRepository extends Repository<Customer>{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null;*/
     }
 
     @Override
     public Integer delete(Integer id) {
-        try{
+        /*try{
             String delStmt = "DELETE FROM customers WHERE customer_id = ?;";
             PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
             ps.setInt(1,id);
@@ -138,51 +207,7 @@ public class CustomersRepository extends Repository<Customer>{
             return id;
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected Customer mapTo(ResultSet rs) {
-        try {
-            if(rs.next()){
-                return new Customer(
-                        rs.getInt("customer_id"),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        rs.getString("address"),
-                        rs.getDouble("balance")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    protected List<Customer> mapToList(ResultSet rs) {
-        List<Customer> customers = new ArrayList<>();
-        try {
-            while (rs.next()) {
-                customers.add(
-                        new Customer(rs.getInt("customer_id"),rs.getString("first_name"),
-                                rs.getString("last_naem"),
-                                rs.getString("username"),
-                                rs.getString("password"),
-                                rs.getString("email"),
-                                rs.getString("address"),
-                                rs.getDouble("balance")
-                        )
-                );
-            }
-            return customers;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        }*/
         return null;
     }
 }
