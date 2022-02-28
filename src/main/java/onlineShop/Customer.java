@@ -15,6 +15,11 @@ public class Customer extends OnlineShopUser {
     private String address;
     private Double balance;
 
+    public Customer(Integer id,String firstname,String lastname,String username,String password,String emailAddress,String address,Double balance){
+        super(id,firstname,lastname,username,password,emailAddress);
+        this.address = address;
+        this.balance = balance;
+    }
     @Override
     public String toString() {
         return "ID: " + super.getId() +

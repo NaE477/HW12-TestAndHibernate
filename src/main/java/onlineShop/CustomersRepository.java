@@ -1,6 +1,8 @@
 package onlineShop;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import java.util.List;
 
@@ -16,10 +18,10 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            Integer customerId = (Integer) session.save(customer);
+            session.save(customer);
             transaction.commit();
             session.close();
-            return customerId;
+            return customer.getId();
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
@@ -76,7 +78,8 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            return session.get(Customer.class, username);
+            Criteria criteria = session.createCriteria(Customer.class);
+            return (Customer) criteria.add(Restrictions.eq("username",username)).uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
@@ -98,7 +101,8 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            return session.get(Customer.class, email);
+            Criteria criteria = session.createCriteria(Customer.class);
+            return (Customer) criteria.add(Restrictions.eq("emailAddress",email)).uniqueResult();
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
@@ -199,6 +203,21 @@ public class CustomersRepository extends Repository<Customer>{
 
     @Override
     public Integer delete(Integer id) {
+        var session = super.getSessionFactory().openSession();
+
+        var transaction = session.beginTransaction();
+
+        try {
+            Query query = session.createQuery("delete from Customer where id = :id");
+            query.setParameter("id",id);
+            query.executeUpdate();
+            session.close();
+            return id;
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            return null;
+        }
         /*try{
             String delStmt = "DELETE FROM customers WHERE customer_id = ?;";
             PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
@@ -208,6 +227,5 @@ public class CustomersRepository extends Repository<Customer>{
         } catch (SQLException e) {
             e.printStackTrace();
         }*/
-        return null;
     }
 }
