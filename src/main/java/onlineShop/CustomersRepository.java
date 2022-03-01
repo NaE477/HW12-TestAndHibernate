@@ -27,25 +27,6 @@ public class CustomersRepository extends Repository<Customer>{
             transaction.rollback();
             return null;
         }
-        /*String insStmt = "INSERT INTO customers (first_name, last_name, username, password, email, address, balance) " +
-                "VALUES (?,?,?,?,?,?,?) RETURNING customer_id;";
-        try {
-            PreparedStatement ps = super.getConnection().prepareStatement(insStmt);
-            ps.setString(1, customer.getFirstName());
-            ps.setString(2, customer.getLastName());
-            ps.setString(3, customer.getUsername());
-            ps.setString(4, customer.getPassword());
-            ps.setString(5, customer.getEmailAddress());
-            ps.setString(6, customer.getAddress());
-            ps.setDouble(7, customer.getBalance());
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("customer_id");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
 
     @Override
@@ -55,21 +36,14 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            return session.get(Customer.class, id);
+            Customer customer = session.get(Customer.class, id);
+            session.close();
+            return customer;
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
             return null;
         }
-        /*String readStmt = "SELECT * FROM customers WHERE customer_id = ?;";
-        try {
-            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
-            ps.setInt(1,id);
-            return mapTo(ps.executeQuery());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
 
     public Customer read(String username){
@@ -79,21 +53,14 @@ public class CustomersRepository extends Repository<Customer>{
 
         try {
             Criteria criteria = session.createCriteria(Customer.class);
-            return (Customer) criteria.add(Restrictions.eq("username",username)).uniqueResult();
+            Customer customer = (Customer) criteria.add(Restrictions.eq("username",username)).uniqueResult();
+            session.close();
+            return customer;
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
             return null;
         }
-        /*String readStmt = "SELECT * FROM customers WHERE username = ?;";
-        try {
-            PreparedStatement ps = super.getConnection().prepareStatement(readStmt);
-            ps.setString(1,username);
-            return mapTo(ps.executeQuery());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
     public Customer readByEmail(String email){
         var session = super.getSessionFactory().openSession();
@@ -102,7 +69,9 @@ public class CustomersRepository extends Repository<Customer>{
 
         try {
             Criteria criteria = session.createCriteria(Customer.class);
-            return (Customer) criteria.add(Restrictions.eq("emailAddress",email)).uniqueResult();
+            Customer customer = (Customer) criteria.add(Restrictions.eq("emailAddress",email)).uniqueResult();
+            session.close();
+            return customer;
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
@@ -118,20 +87,14 @@ public class CustomersRepository extends Repository<Customer>{
 
         try {
             Query<Customer> query = session.createQuery("from Customer",Customer.class);
-            return query.list();
+            List<Customer> customers = query.list();
+            session.close();
+            return customers;
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
             return null;
         }
-        /*String readAllStmt = "SELECT * FROM customers";
-        try {
-            PreparedStatement ps = super.getConnection().prepareStatement(readAllStmt);
-            return mapToList(ps.executeQuery());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
 
     @Override
@@ -141,35 +104,15 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            session.update(customer);
+            session.saveOrUpdate(customer);
+            transaction.commit();
+            session.close();
             return customer.getId();
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
             return null;
         }
-        /*String updateStmt = "UPDATE customers" +
-                " SET password = ?," +
-                "email = ?," +
-                "address = ?," +
-                "balance = ? " +
-                "WHERE username = ? " +
-                "RETURNING customer_id;";
-        try {
-            PreparedStatement ps = super.getConnection().prepareStatement(updateStmt);
-            ps.setString(1,customer.getPassword());
-            ps.setString(2,customer.getEmailAddress());
-            ps.setString(3,customer.getAddress());
-            ps.setDouble(4,customer.getBalance());
-            ps.setString(5, customer.getUsername());
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                return rs.getInt("customer_id");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
 
     @Override
@@ -180,25 +123,14 @@ public class CustomersRepository extends Repository<Customer>{
 
         try {
             session.delete(customer);
+            transaction.commit();
+            session.close();
             return customer.getId();
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
             return null;
         }
-        /*try{
-            String delStmt = "DELETE FROM customers WHERE customer_id = ? OR username = ? RETURNING customer_id;";
-            PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
-            ps.setInt(1,customer.getId());
-            ps.setString(2,customer.getUsername());
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                return rs.getInt("customer_id");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;*/
     }
 
     @Override
@@ -218,14 +150,5 @@ public class CustomersRepository extends Repository<Customer>{
             transaction.rollback();
             return null;
         }
-        /*try{
-            String delStmt = "DELETE FROM customers WHERE customer_id = ?;";
-            PreparedStatement ps = super.getConnection().prepareStatement(delStmt);
-            ps.setInt(1,id);
-            ResultSet rs = ps.executeQuery();
-            return id;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
     }
 }

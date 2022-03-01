@@ -20,6 +20,13 @@ public class Clerk extends BankUser {
     private President president;
     private Double salary;
 
+    public Clerk(Integer id,String firstname,String lastname,String username,String password,Branch branch,President president,Double salary) {
+        super(id,firstname,lastname,username,password);
+        this.branch = branch;
+        this.president = president;
+        this.salary = salary;
+    }
+
     public String toString() {
         return "Clerk ID: " + super.getUserId() +
                 " First Name: " + super.getFirstname() +

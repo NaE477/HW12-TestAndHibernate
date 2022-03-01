@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.List;
 
 @Getter
@@ -15,7 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class President extends BankUser {
-    private Integer branch_id;
+    @OneToOne
+    Branch branch;
     @OneToMany
     private List<Clerk> clerks;
     private Double salary;
@@ -23,9 +25,9 @@ public class President extends BankUser {
 
     public President(int userId, String firstname, String lastname,
                      String username, String password,
-                     Integer branch_id,Double salary){
+                     Branch branch,Double salary){
         super(userId, firstname, lastname, username, password);
-        this.branch_id = branch_id;
+        this.branch = branch;
         this.salary = salary;
     }
 
@@ -34,7 +36,7 @@ public class President extends BankUser {
         return "President ID: " + super.getUserId() +
                 " Full Name: " + super.getFirstname()  + " " + super.getLastname() +
                 " Username: " + super.getPassword() +
-                " Branch ID: " + branch_id +
+                " Branch ID: " + branch.getId() +
                 " Salary: " + salary.intValue();
     }
 }

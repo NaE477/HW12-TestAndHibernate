@@ -3,7 +3,6 @@ package onlineShop;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ class CustomersRepositoryTest {
     private static CustomersRepository customersRepository;
 
     @BeforeAll
-    private static void initialize() {
+    static void initialize() {
         var registry = new StandardServiceRegistryBuilder()
                 .configure("hibernate-onlineshop-test.cfg.xml") //goes and fetches configurations from hibernate.cfg.xml
                 .build();
@@ -127,12 +126,12 @@ class CustomersRepositoryTest {
 
         //Assert
         assertNotNull(updateId);
-        assertEquals("editedFirstname",customer.getFirstName());
-        assertEquals("editedLastname",customer.getLastName());
-        assertEquals("editedUsername",customer.getUsername());
-        assertEquals("editedPassword",customer.getPassword());
-        assertEquals("editedAddress",customer.getAddress());
-        assertEquals("editedEmail",customer.getEmailAddress());
+        assertEquals("editedFirstname",customersRepository.read(updateId).getFirstName());
+        assertEquals("editedLastname",customersRepository.read(updateId).getLastName());
+        assertEquals("editedUsername",customersRepository.read(updateId).getUsername());
+        assertEquals("editedPassword",customersRepository.read(updateId).getPassword());
+        assertEquals("editedAddress",customersRepository.read(updateId).getAddress());
+        assertEquals("editedEmail",customersRepository.read(updateId).getEmailAddress());
     }
 
     @Test
@@ -153,7 +152,7 @@ class CustomersRepositoryTest {
     void plainDelete() {
         //Arrange
         Customer customer = new Customer(0,"naeim","rahimzade","nae","rae","nae@rae.com","anzali,mala,iman 3,misagh,unit 7",20000d);
-        Integer customerId = customersRepository.delete(customer);
+        Integer customerId = customersRepository.insert(customer);
 
         //Act
         Integer customerToDelete = customersRepository.delete(customerId);
