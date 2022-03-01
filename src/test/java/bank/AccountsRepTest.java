@@ -1,9 +1,6 @@
 package bank;
 
-import onlineShop.OnlineShopUser;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.*;
 
 
@@ -24,11 +21,6 @@ class AccountsRepTest {
 
     @BeforeAll
     static void initialize() {
-        var registry = new StandardServiceRegistryBuilder()
-                .configure("hibernate-bank.cfg.xml") //goes and fetches configurations from hibernate-onlineshop.cfg.xml
-                .build();
-
-        //registry is useful for creating session factory
         sessionFactory = SessionFactorySingleton.getInstance();
 
         accountsRep = new AccountsRep(sessionFactory);
