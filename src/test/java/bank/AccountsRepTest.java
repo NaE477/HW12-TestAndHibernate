@@ -25,20 +25,11 @@ class AccountsRepTest {
     @BeforeAll
     static void initialize() {
         var registry = new StandardServiceRegistryBuilder()
-                .configure("hibernate-bank-test.cfg.xml") //goes and fetches configurations from hibernate-bank-test.cfg.xml
+                .configure("hibernate-bank.cfg.xml") //goes and fetches configurations from hibernate-onlineshop.cfg.xml
                 .build();
 
         //registry is useful for creating session factory
-        sessionFactory = new MetadataSources(registry)
-                .addAnnotatedClass(Account.class)
-                .addAnnotatedClass(Branch.class)
-                .addAnnotatedClass(Bank.class)
-                .addAnnotatedClass(Clerk.class)
-                .addAnnotatedClass(Client.class)
-                .addAnnotatedClass(President.class)
-                .addAnnotatedClass(OnlineShopUser.class)
-                .buildMetadata()
-                .buildSessionFactory();
+        sessionFactory = SessionFactorySingleton.getInstance();
 
         accountsRep = new AccountsRep(sessionFactory);
 
@@ -70,6 +61,11 @@ class AccountsRepTest {
         transaction.commit();
 
         session.close();
+    }
+
+    @Test
+    void sessionTest() {
+        assertDoesNotThrow(() -> sessionFactory = SessionFactorySingleton.getInstance());
     }
 
     @Test

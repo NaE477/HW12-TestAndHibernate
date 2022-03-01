@@ -52,10 +52,14 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            Criteria criteria = session.createCriteria(Customer.class);
+            Query<Customer> query = session.createQuery("from Customer where username = :username",Customer.class);
+            query.setParameter("username",username);
+            return query.getSingleResult();
+
+            /*Criteria criteria = session.createCriteria(Customer.class);
             Customer customer = (Customer) criteria.add(Restrictions.eq("username",username)).uniqueResult();
             session.close();
-            return customer;
+            return customer;*/
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();
@@ -68,10 +72,9 @@ public class CustomersRepository extends Repository<Customer>{
         var transaction = session.beginTransaction();
 
         try {
-            Criteria criteria = session.createCriteria(Customer.class);
-            Customer customer = (Customer) criteria.add(Restrictions.eq("emailAddress",email)).uniqueResult();
-            session.close();
-            return customer;
+            Query<Customer> query = session.createQuery("from Customer where emailAddress = :emailAddress",Customer.class);
+            query.setParameter("emailAddress",email);
+            return query.getSingleResult();
         } catch (Exception e) {
             e.printStackTrace();
             transaction.rollback();

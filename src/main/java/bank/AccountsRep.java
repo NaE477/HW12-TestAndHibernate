@@ -65,7 +65,7 @@ public class AccountsRep implements ThingCRUD<Account> {
         var transaction = session.beginTransaction();
 
         try {
-            Query<Account> query = session.createQuery("from Account where client.id = :clientId");
+            Query<Account> query = session.createQuery("from Account where client.id = :clientId",Account.class);
             query.setParameter("clientId",client.getUserId());
             return query.list();
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class AccountsRep implements ThingCRUD<Account> {
         var transaction = session.beginTransaction();
 
         try {
-            Query<Account> query = session.createQuery("from Account where client.id = :clientId and branch.id = :branchId");
+            Query<Account> query = session.createQuery("from Account where client.id = :clientId and branch.id = :branchId",Account.class);
             query.setParameter("clientId",client.getUserId());
             query.setParameter("branchId",branch.getId());
             return query.list();
