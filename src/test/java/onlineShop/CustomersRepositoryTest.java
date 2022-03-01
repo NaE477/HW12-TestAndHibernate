@@ -19,7 +19,7 @@ class CustomersRepositoryTest {
     @BeforeAll
     static void initialize() {
         var registry = new StandardServiceRegistryBuilder()
-                .configure("hibernate-onlineshop-test.cfg.xml") //goes and fetches configurations from hibernate.cfg.xml
+                .configure("hibernate-onlineshop-test.cfg.xml") //goes and fetches configurations from hibernate-onlineshop-test.cfg.xml
                 .build();
 
         //registry is useful for creating session factory

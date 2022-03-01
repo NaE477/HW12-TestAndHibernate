@@ -4,7 +4,9 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
+          <unit-entry name="hibernate-bank-test.cfg.xml" />
           <unit-entry name="hibernate-bank.cfg.xml" />
+          <unit-entry name="hibernate-onlineshop-test.cfg.xml" />
           <unit-entry name="hibernate-test.cfg.xml" />
           <unit-entry name="hibernate.cfg.xml" />
         </datasource-map>
@@ -12,7 +14,7 @@
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate-bank-test.cfg.xml" />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate-bank.cfg.xml" />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate-onlineshop-test.cfg.xml" />
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate.cfg.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate-onlineshop.cfg.xml" />
       </configuration>
     </facet>
   </component>

@@ -7,6 +7,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.jupiter.api.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ class AccountsRepTest {
     @BeforeAll
     static void initialize() {
         var registry = new StandardServiceRegistryBuilder()
-                .configure("hibernate-bank-test.cfg.xml") //goes and fetches configurations from hibernate.cfg.xml
+                .configure("hibernate-bank-test.cfg.xml") //goes and fetches configurations from hibernate-bank-test.cfg.xml
                 .build();
 
         //registry is useful for creating session factory
@@ -42,6 +43,7 @@ class AccountsRepTest {
         accountsRep = new AccountsRep(sessionFactory);
 
         var session = sessionFactory.openSession();
+        var transaction = session.beginTransaction();
 
         bank = new Bank(0,"melli",null,null);
         session.save(bank);
@@ -57,6 +59,15 @@ class AccountsRepTest {
 
         client = new Client(0,"naeim","rahimzade","nae","nae123");
         session.save(client);
+
+        bank.setBranches(List.of(branch));
+        session.update(bank);
+
+        branch.setPresident(president);
+        branch.setClerks(new ArrayList<>(List.of(clerk)));
+        session.update(branch);
+
+        transaction.commit();
 
         session.close();
     }
@@ -120,7 +131,7 @@ class AccountsRepTest {
         accountsRep.insert(account3);
 
         //Act
-        List<Account> accounts = accountsRep.readAllByClient(account1);
+        List<Account> accounts = accountsRep.readAllByClient(client);
 
         //Assert
         assertNotNull(accounts);
@@ -138,9 +149,9 @@ class AccountsRepTest {
         accountsRep.insert(account3);
 
         //Act
-        List<Account> accounts1 = accountsRep.readAccountsByClientInBranch(account1.getClient(),branch);
-        List<Account> accounts2 = accountsRep.readAccountsByClientInBranch(account2.getClient(),branch);
-        List<Account> accounts3 = accountsRep.readAccountsByClientInBranch(account3.getClient(),branch);
+        List<Account> accounts1 = accountsRep.readAccountsByClientInBranch(client,branch);
+        List<Account> accounts2 = accountsRep.readAccountsByClientInBranch(client,branch);
+        List<Account> accounts3 = accountsRep.readAccountsByClientInBranch(client,branch);
 
         //Assert
         assertNotNull(account1);

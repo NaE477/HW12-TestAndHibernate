@@ -12,7 +12,7 @@ public class SessionFactorySingleton {
 
         static {
             var registry = new StandardServiceRegistryBuilder()
-                    .configure() //goes and fetches configurations from hibernate.cfg.xml
+                    .configure("hibernate-onlineshop.cfg.xml") //goes and fetches configurations from hibernate-onlineshop.cfg.xml
                     .build();
 
             //registry is useful for creating session factory

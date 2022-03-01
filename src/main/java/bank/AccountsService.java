@@ -26,10 +26,10 @@ public class AccountsService {
         return findByClientInBranch(clientId,branchId) != null;
     }*/
 
-    public Boolean existsForClient(Integer clientId, Integer accountId) {
-        List<Account> accounts = findAllByClient(clientId);
-        for (Account account : accounts) {
-            if (account.getId() == accountId) {
+    public Boolean existsForClient(Client client, Account account) {
+        List<Account> accounts = findAllByClient(client);
+        for (Account a : accounts) {
+            if (a.getId() == account.getId()) {
                 return true;
             }
         }
@@ -55,8 +55,8 @@ public class AccountsService {
 */
 
 
-    public List<Account> findAllByClient(Integer clientId) {
-        return ar.readAllByClient(clientId);
+    public List<Account> findAllByClient(Client client) {
+        return ar.readAllByClient(client);
     }
 
 

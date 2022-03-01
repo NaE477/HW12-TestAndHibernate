@@ -59,14 +59,14 @@ public class AccountsRep implements ThingCRUD<Account> {
         }
     }
 
-    public List<Account> readAllByClient(Account account){
+    public List<Account> readAllByClient(Client client){
         var session = sessionFactory.openSession();
 
         var transaction = session.beginTransaction();
 
         try {
             Query<Account> query = session.createQuery("from Account where client.id = :clientId");
-            query.setParameter("clientId",account.getClient().getUserId());
+            query.setParameter("clientId",client.getUserId());
             return query.list();
         } catch (Exception e) {
             e.printStackTrace();
